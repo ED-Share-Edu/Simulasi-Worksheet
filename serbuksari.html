@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Penyebaran Serbuk Sari</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(to bottom, #e0f7fa, #b2ebf2);
+            min-height: 100vh;
+        }
+        
+        .flower {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .flower:hover {
+            transform: scale(1.05);
+        }
+        
+        .pollen {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 20;
+        }
+        
+        .bee {
+            position: absolute;
+            transition: transform 0.5s, left 2s, top 2s;
+            z-index: 30;
+            cursor: pointer;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+        }
+        
+        .info-card {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .info-card.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .btn-control {
+            transition: all 0.3s ease;
+        }
+        
+        .btn-control:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .wind-particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 15;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .pollination-indicator {
+            position: absolute;
+            font-size: 12px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            padding: 2px 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 25;
+            pointer-events: none;
+            white-space: nowrap;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .pollination-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s ease-out;
+        }
+        
+        .flower-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 5;
+        }
+        
+        .pollen-source-indicator {
+            position: absolute;
+            height: 2px;
+            background-color: rgba(255, 215, 0, 0.6);
+            transform-origin: left center;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            z-index: 15;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-emerald-800 mb-2">Simulasi Penyebaran Serbuk Sari</h1>
+            <p class="text-lg text-emerald-700">Pelajari bagaimana serbuk sari menyebar dari satu bunga ke bunga lainnya</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="md:w-1/3">
+                    <h2 class="text-xl font-semibold text-emerald-700 mb-3">Cara Kerja Simulasi</h2>
+                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                        <li>Klik pada bunga untuk melepaskan serbuk sari</li>
+                        <li>Gunakan tombol "Kirim Lebah" untuk melihat penyerbukan oleh serangga</li>
+                        <li>Aktifkan angin untuk melihat penyerbukan oleh angin</li>
+                        <li>Amati bagaimana serbuk sari berpindah dari satu bunga ke bunga lainnya</li>
+                        <li><span class="font-semibold">Perhatikan perubahan warna dan status bunga saat terjadi penyerbukan silang</span></li>
+                    </ul>
+                    
+                    <div class="mt-6 space-y-3">
+                        <button id="sendBee" class="btn-control w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path d="M12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                            </svg>
+                            Kirim Lebah
+                        </button>
+                        
+                        <button id="toggleWind" class="btn-control w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            Aktifkan Angin
+                        </button>
+                        
+                        <button id="reset" class="btn-control w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                            </svg>
+                            Reset Simulasi
+                        </button>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <h3 class="font-semibold text-yellow-800 mb-2">Keterangan Status Bunga:</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
+                                <span class="text-sm">Belum Diserbuki</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                                <span class="text-sm">Menghasilkan Serbuk Sari</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                                <span class="text-sm">Diserbuki (Penyerbukan Silang)</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+                                <span class="text-sm">Diserbuki Sendiri</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-2/3 relative bg-gradient-to-b from-sky-100 to-emerald-100 rounded-xl p-4 min-h-[450px]" id="simulation-area">
+                    <!-- Flowers will be added here by JavaScript -->
+                    <div id="tooltip" class="tooltip"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="info-section" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="info-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center mb-4">
+                    <div class="bg-amber-100 p-3 rounded-full mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">Penyerbukan oleh Serangga</h3>
+                </div>
+                <p class="text-gray-600">Lebah dan serangga lainnya membantu memindahkan serbuk sari dari satu bunga ke bunga lainnya saat mereka mengumpulkan nektar. Penyerbukan silang ini sangat penting untuk keragaman genetik tanaman.</p>
+            </div>
+            
+            <div class="info-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center mb-4">
+                    <div class="bg-blue-100 p-3 rounded-full mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">Penyerbukan oleh Angin</h3>
+                </div>
+                <p class="text-gray-600">Beberapa tanaman mengandalkan angin untuk membawa serbuk sari mereka. Serbuk sari ini biasanya lebih ringan dan mudah terbawa angin. Penyerbukan oleh angin bersifat acak dan kurang efisien dibanding penyerbukan oleh serangga.</p>
+            </div>
+            
+            <div class="info-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center mb-4">
+                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">Penyerbukan Silang</h3>
+                </div>
+                <p class="text-gray-600">Penyerbukan silang terjadi ketika serbuk sari dari satu bunga membuahi bunga lain dari tanaman yang berbeda. Proses ini menghasilkan keturunan dengan variasi genetik yang lebih besar, meningkatkan kemampuan adaptasi dan ketahanan tanaman.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const simulationArea = document.getElementById('simulation-area');
+            const sendBeeButton = document.getElementById('sendBee');
+            const toggleWindButton = document.getElementById('toggleWind');
+            const resetButton = document.getElementById('reset');
+            const infoCards = document.querySelectorAll('.info-card');
+            const tooltip = document.getElementById('tooltip');
+            
+            let windActive = false;
+            let windInterval;
+            let beeActive = false;
+            let bee = null;
+            let pollinationHistory = {};
+            
+            // Show info cards with animation
+            setTimeout(() => {
+                infoCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('show');
+                    }, index * 200);
+                });
+            }, 500);
+            
+            // Create flowers
+            const flowerColors = [
+                {petals: '#FF6B6B', center: '#FFD700', name: 'Bunga Merah'},
+                {petals: '#4ECDC4', center: '#FFD700', name: 'Bunga Teal'},
+                {petals: '#9D65C9', center: '#FFD700', name: 'Bunga Ungu'},
+                {petals: '#FF9F1C', center: '#FFD700', name: 'Bunga Oranye'},
+                {petals: '#1A535C', center: '#FFD700', name: 'Bunga Hijau Tua'}
+            ];
+            
+            const flowerPositions = [
+                {left: '10%', top: '20%'},
+                {left: '30%', top: '60%'},
+                {left: '50%', top: '30%'},
+                {left: '70%', top: '65%'},
+                {left: '85%', top: '25%'}
+            ];
+            
+            // Create flowers
+            flowerPositions.forEach((position, index) => {
+                const flower = document.createElement('div');
+                flower.className = 'flower absolute';
+                flower.style.left = position.left;
+                flower.style.top = position.top;
+                flower.id = `flower-${index}`;
+                
+                const color = flowerColors[index % flowerColors.length];
+                
+                flower.innerHTML = `
+                    <div class="status-badge bg-gray-400">Belum Diserbuki</div>
+                    <svg width="80" height="80" viewBox="0 0 100 100">
+                        <!-- Petals -->
+                        <path d="M50,30 C60,10 80,20 50,50 C20,20 40,10 50,30" fill="${color.petals}" />
+                        <path d="M50,30 C40,10 20,20 50,50 C80,20 60,10 50,30" fill="${color.petals}" transform="rotate(72 50 50)" />
+                        <path d="M50,30 C40,10 20,20 50,50 C80,20 60,10 50,30" fill="${color.petals}" transform="rotate(144 50 50)" />
+                        <path d="M50,30 C40,10 20,20 50,50 C80,20 60,10 50,30" fill="${color.petals}" transform="rotate(216 50 50)" />
+                        <path d="M50,30 C40,10 20,20 50,50 C80,20 60,10 50,30" fill="${color.petals}" transform="rotate(288 50 50)" />
+                        
+                        <!-- Center -->
+                        <circle cx="50" cy="50" r="12" fill="${color.center}" />
+                    </svg>
+                    <div class="flower-label">${color.name}</div>
+                    <div class="pollination-effect"></div>
+                `;
+                
+                flower.dataset.pollenCount = 20;
+                flower.dataset.pollinated = "false";
+                flower.dataset.pollinationType = "none";
+                flower.dataset.color = color.petals;
+                flower.dataset.name = color.name;
+                flower.dataset.index = index;
+                
+                flower.addEventListener('click', () => {
+                    if (parseInt(flower.dataset.pollenCount) > 0) {
+                        releasePollen(flower);
+                        flower.dataset.pollenCount = parseInt(flower.dataset.pollenCount) - 5;
+                        
+                        // Update status to show it's producing pollen
+                        updateFlowerStatus(flower, "producing");
+                    }
+                });
+                
+                // Add tooltip functionality
+                flower.addEventListener('mouseenter', (e) => {
+                    const status = flower.querySelector('.status-badge').textContent;
+                    let tooltipText = `${color.name}<br>Status: ${status}<br>Serbuk Sari: ${flower.dataset.pollenCount}`;
+                    
+                    // Add pollination history if any
+                    if (pollinationHistory[flower.id]) {
+                        tooltipText += '<br><br>Riwayat Penyerbukan:';
+                        pollinationHistory[flower.id].forEach(record => {
+                            tooltipText += `<br>- Diserbuki oleh ${record.source} (${record.time})`;
+                        });
+                    }
+                    
+                    showTooltip(e, tooltipText);
+                });
+                
+                flower.addEventListener('mousemove', (e) => {
+                    positionTooltip(e);
+                });
+                
+                flower.addEventListener('mouseleave', () => {
+                    hideTooltip();
+                });
+                
+                simulationArea.appendChild(flower);
+            });
+            
+            function showTooltip(e, html) {
+                tooltip.innerHTML = html;
+                tooltip.style.opacity = '1';
+                positionTooltip(e);
+            }
+            
+            function positionTooltip(e) {
+                const simulationRect = simulationArea.getBoundingClientRect();
+                const x = e.clientX - simulationRect.left;
+                const y = e.clientY - simulationRect.top;
+                
+                tooltip.style.left = `${x + 15}px`;
+                tooltip.style.top = `${y + 15}px`;
+            }
+            
+            function hideTooltip() {
+                tooltip.style.opacity = '0';
+            }
+            
+            // Update flower status visually
+            function updateFlowerStatus(flower, status) {
+                const statusBadge = flower.querySelector('.status-badge');
+                const pollinationEffect = flower.querySelector('.pollination-effect');
+                
+                switch(status) {
+                    case "none":
+                        statusBadge.textContent = "Belum Diserbuki";
+                        statusBadge.className = "status-badge bg-gray-400";
+                        flower.dataset.pollinationType = "none";
+                        break;
+                    case "producing":
+                        statusBadge.textContent = "Menghasilkan Serbuk Sari";
+                        statusBadge.className = "status-badge bg-yellow-500";
+                        break;
+                    case "self-pollinated":
+                        statusBadge.textContent = "Diserbuki Sendiri";
+                        statusBadge.className = "status-badge bg-purple-500";
+                        flower.dataset.pollinationType = "self";
+                        
+                        // Add visual effect
+                        pollinationEffect.style.boxShadow = `0 0 15px 5px ${flower.dataset.color}`;
+                        pollinationEffect.style.opacity = '0.6';
+                        setTimeout(() => {
+                            pollinationEffect.style.opacity = '0';
+                        }, 2000);
+                        break;
+                    case "cross-pollinated":
+                        statusBadge.textContent = "Diserbuki (Penyerbukan Silang)";
+                        statusBadge.className = "status-badge bg-green-500";
+                        flower.dataset.pollinationType = "cross";
+                        
+                        // Add visual effect
+                        pollinationEffect.style.boxShadow = '0 0 15px 5px #22c55e';
+                        pollinationEffect.style.opacity = '0.6';
+                        setTimeout(() => {
+                            pollinationEffect.style.opacity = '0';
+                        }, 2000);
+                        break;
+                }
+            }
+            
+            // Create bee
+            function createBee() {
+                if (bee) return;
+                
+                bee = document.createElement('div');
+                bee.className = 'bee absolute';
+                bee.style.left = '-50px';
+                bee.style.top = '50%';
+                bee.innerHTML = `
+                    <svg width="40" height="40" viewBox="0 0 100 100">
+                        <!-- Body -->
+                        <ellipse cx="50" cy="50" rx="30" ry="20" fill="#FFC107" />
+                        
+                        <!-- Stripes -->
+                        <rect x="30" y="40" width="40" height="5" fill="black" />
+                        <rect x="30" y="50" width="40" height="5" fill="black" />
+                        <rect x="30" y="60" width="40" height="5" fill="black" />
+                        
+                        <!-- Wings -->
+                        <ellipse cx="40" cy="30" rx="15" ry="10" fill="rgba(255,255,255,0.7)" />
+                        <ellipse cx="60" cy="30" rx="15" ry="10" fill="rgba(255,255,255,0.7)" />
+                        
+                        <!-- Eyes -->
+                        <circle cx="65" cy="45" r="5" fill="black" />
+                        <circle cx="65" cy="45" r="1" fill="white" />
+                        
+                        <!-- Stinger -->
+                        <path d="M20,50 L10,50" stroke="black" stroke-width="2" />
+                    </svg>
+                `;
+                
+                bee.dataset.hasPollenCount = 0;
+                bee.dataset.currentPollenSource = null;
+                simulationArea.appendChild(bee);
+                
+                bee.addEventListener('click', () => {
+                    if (parseInt(bee.dataset.hasPollenCount) > 0) {
+                        const pollenCount = Math.min(5, parseInt(bee.dataset.hasPollenCount));
+                        for (let i = 0; i < pollenCount; i++) {
+                            createPollen(bee, true);
+                        }
+                        bee.dataset.hasPollenCount = parseInt(bee.dataset.hasPollenCount) - pollenCount;
+                    }
+                });
+            }
+            
+            // Release pollen from a flower
+            function releasePollen(flower) {
+                const rect = flower.getBoundingClientRect();
+                const simulationRect = simulationArea.getBoundingClientRect();
+                
+                const centerX = rect.left + rect.width / 2 - simulationRect.left;
+                const centerY = rect.top + rect.height / 2 - simulationRect.top;
+                
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const pollen = document.createElement('div');
+                        pollen.className = 'pollen';
+                        pollen.style.left = `${centerX}px`;
+                        pollen.style.top = `${centerY}px`;
+                        pollen.dataset.sourceFlower = flower.id;
+                        pollen.dataset.sourceColor = flower.dataset.color;
+                        pollen.dataset.sourceName = flower.dataset.name;
+                        simulationArea.appendChild(pollen);
+                        
+                        const angle = Math.random() * Math.PI * 2;
+                        const distance = 50 + Math.random() * 100;
+                        const duration = 1000 + Math.random() * 2000;
+                        
+                        const targetX = centerX + Math.cos(angle) * distance;
+                        const targetY = centerY + Math.sin(angle) * distance;
+                        
+                        animatePollen(pollen, targetX, targetY, duration);
+                    }, i * 100);
+                }
+                
+                // Show visual indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'pollination-indicator';
+                indicator.textContent = 'Melepaskan serbuk sari!';
+                indicator.style.left = `${centerX}px`;
+                indicator.style.top = `${centerY - 30}px`;
+                simulationArea.appendChild(indicator);
+                
+                // Fade in and out
+                setTimeout(() => {
+                    indicator.style.opacity = '1';
+                    setTimeout(() => {
+                        indicator.style.opacity = '0';
+                        setTimeout(() => {
+                            if (indicator.parentNode) {
+                                indicator.parentNode.removeChild(indicator);
+                            }
+                        }, 500);
+                    }, 1500);
+                }, 10);
+            }
+            
+            // Create pollen from bee
+            function createPollen(source, isFromBee = false) {
+                const rect = source.getBoundingClientRect();
+                const simulationRect = simulationArea.getBoundingClientRect();
+                
+                const centerX = rect.left + rect.width / 2 - simulationRect.left;
+                const centerY = rect.top + rect.height / 2 - simulationRect.top;
+                
+                const pollen = document.createElement('div');
+                pollen.className = 'pollen';
+                pollen.style.left = `${centerX}px`;
+                pollen.style.top = `${centerY}px`;
+                
+                // If from bee, use the bee's current pollen source
+                if (isFromBee && bee.dataset.currentPollenSource) {
+                    const sourceFlower = document.getElementById(bee.dataset.currentPollenSource);
+                    if (sourceFlower) {
+                        pollen.dataset.sourceFlower = sourceFlower.id;
+                        pollen.dataset.sourceColor = sourceFlower.dataset.color;
+                        pollen.dataset.sourceName = sourceFlower.dataset.name;
+                        
+                        // Color the pollen based on source flower
+                        pollen.style.backgroundColor = sourceFlower.dataset.color;
+                        pollen.style.opacity = '0.6';
+                    }
+                } else {
+                    pollen.dataset.sourceFlower = source.id;
+                    if (source.dataset && source.dataset.color) {
+                        pollen.dataset.sourceColor = source.dataset.color;
+                        pollen.dataset.sourceName = source.dataset.name;
+                        
+                        // Color the pollen based on source flower
+                        pollen.style.backgroundColor = source.dataset.color;
+                        pollen.style.opacity = '0.6';
+                    }
+                }
+                
+                simulationArea.appendChild(pollen);
+                
+                let targetX, targetY;
+                
+                if (isFromBee) {
+                    // Find the closest flower
+                    const flowers = document.querySelectorAll('.flower');
+                    let closestFlower = null;
+                    let minDistance = Infinity;
+                    
+                    flowers.forEach(flower => {
+                        const flowerRect = flower.getBoundingClientRect();
+                        const flowerX = flowerRect.left + flowerRect.width / 2 - simulationRect.left;
+                        const flowerY = flowerRect.top + flowerRect.height / 2 - simulationRect.top;
+                        
+                        const distance = Math.sqrt(
+                            Math.pow(centerX - flowerX, 2) + 
+                            Math.pow(centerY - flowerY, 2)
+                        );
+                        
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestFlower = flower;
+                        }
+                    });
+                    
+                    if (closestFlower) {
+                        const flowerRect = closestFlower.getBoundingClientRect();
+                        targetX = flowerRect.left + flowerRect.width / 2 - simulationRect.left;
+                        targetY = flowerRect.top + flowerRect.height / 2 - simulationRect.top;
+                        
+                        // Create a visual connection line between source and target flowers
+                        if (pollen.dataset.sourceFlower && pollen.dataset.sourceFlower !== closestFlower.id) {
+                            const sourceFlower = document.getElementById(pollen.dataset.sourceFlower);
+                            if (sourceFlower) {
+                                createPollenPath(sourceFlower, closestFlower);
+                            }
+                        }
+                    } else {
+                        targetX = centerX + (Math.random() - 0.5) * 100;
+                        targetY = centerY + (Math.random() - 0.5) * 100;
+                    }
+                } else {
+                    targetX = centerX + (Math.random() - 0.5) * 100;
+                    targetY = centerY + (Math.random() - 0.5) * 100;
+                }
+                
+                animatePollen(pollen, targetX, targetY, 1500);
+            }
+            
+            // Create visual path between flowers for cross-pollination
+            function createPollenPath(sourceFlower, targetFlower) {
+                const simulationRect = simulationArea.getBoundingClientRect();
+                const sourceRect = sourceFlower.getBoundingClientRect();
+                const targetRect = targetFlower.getBoundingClientRect();
+                
+                const sourceX = sourceRect.left + sourceRect.width / 2 - simulationRect.left;
+                const sourceY = sourceRect.top + sourceRect.height / 2 - simulationRect.top;
+                const targetX = targetRect.left + targetRect.width / 2 - simulationRect.left;
+                const targetY = targetRect.top + targetRect.height / 2 - simulationRect.top;
+                
+                const dx = targetX - sourceX;
+                const dy = targetY - sourceY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                
+                const path = document.createElement('div');
+                path.className = 'pollen-source-indicator';
+                path.style.left = `${sourceX}px`;
+                path.style.top = `${sourceY}px`;
+                path.style.width = `${distance}px`;
+                path.style.transform = `rotate(${angle}deg)`;
+                path.style.backgroundColor = sourceFlower.dataset.color;
+                simulationArea.appendChild(path);
+                
+                // Fade out and remove after animation
+                setTimeout(() => {
+                    path.style.opacity = '0';
+                    setTimeout(() => {
+                        if (path.parentNode) {
+                            path.parentNode.removeChild(path);
+                        }
+                    }, 1000);
+                }, 2000);
+            }
+            
+            // Animate pollen movement
+            function animatePollen(pollen, targetX, targetY, duration) {
+                const startX = parseFloat(pollen.style.left);
+                const startY = parseFloat(pollen.style.top);
+                const startTime = performance.now();
+                
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Easing function for more natural movement
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+                    
+                    const currentX = startX + (targetX - startX) * easeProgress;
+                    const currentY = startY + (targetY - startY) * easeProgress + 
+                                    Math.sin(progress * Math.PI) * 20; // Add a slight arc
+                    
+                    pollen.style.left = `${currentX}px`;
+                    pollen.style.top = `${currentY}px`;
+                    
+                    // Check if pollen is near any flower for pollination
+                    if (progress > 0.5) {
+                        checkPollenCollision(pollen);
+                    }
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    } else {
+                        // Remove pollen after animation completes
+                        setTimeout(() => {
+                            if (pollen.parentNode) {
+                                pollen.parentNode.removeChild(pollen);
+                            }
+                        }, 2000);
+                    }
+                }
+                
+                requestAnimationFrame(update);
+            }
+            
+            // Check if pollen collides with a flower
+            function checkPollenCollision(pollen) {
+                const pollenRect = pollen.getBoundingClientRect();
+                const flowers = document.querySelectorAll('.flower');
+                const simulationRect = simulationArea.getBoundingClientRect();
+                
+                flowers.forEach(flower => {
+                    const flowerRect = flower.getBoundingClientRect();
+                    
+                    // Simple collision detection
+                    if (
+                        pollenRect.left < flowerRect.right &&
+                        pollenRect.right > flowerRect.left &&
+                        pollenRect.top < flowerRect.bottom &&
+                        pollenRect.bottom > flowerRect.top
+                    ) {
+                        // Pollen reached a flower
+                        if (bee && !beeActive) {
+                            bee.dataset.hasPollenCount = parseInt(bee.dataset.hasPollenCount) + 1;
+                        }
+                        
+                        // Check if this is cross-pollination or self-pollination
+                        if (pollen.dataset.sourceFlower && pollen.dataset.sourceFlower !== flower.id) {
+                            // Cross-pollination
+                            updateFlowerStatus(flower, "cross-pollinated");
+                            
+                            // Record pollination history
+                            if (!pollinationHistory[flower.id]) {
+                                pollinationHistory[flower.id] = [];
+                            }
+                            
+                            const now = new Date();
+                            const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                            
+                            pollinationHistory[flower.id].push({
+                                source: pollen.dataset.sourceName || "Bunga Lain",
+                                time: timeStr
+                            });
+                            
+                            // Show cross-pollination indicator
+                            const indicator = document.createElement('div');
+                            indicator.className = 'pollination-indicator';
+                            indicator.textContent = `Diserbuki oleh ${pollen.dataset.sourceName || "Bunga Lain"}!`;
+                            indicator.style.backgroundColor = 'rgba(34, 197, 94, 0.9)';
+                            indicator.style.color = 'white';
+                            
+                            const flowerCenterX = flowerRect.left + flowerRect.width / 2 - simulationRect.left;
+                            const flowerCenterY = flowerRect.top - simulationRect.top;
+                            
+                            indicator.style.left = `${flowerCenterX}px`;
+                            indicator.style.top = `${flowerCenterY - 10}px`;
+                            simulationArea.appendChild(indicator);
+                            
+                            // Fade in and out
+                            setTimeout(() => {
+                                indicator.style.opacity = '1';
+                                setTimeout(() => {
+                                    indicator.style.opacity = '0';
+                                    setTimeout(() => {
+                                        if (indicator.parentNode) {
+                                            indicator.parentNode.removeChild(indicator);
+                                        }
+                                    }, 500);
+                                }, 2000);
+                            }, 10);
+                            
+                            // Create pulse effect
+                            const pulseEffect = document.createElement('div');
+                            pulseEffect.className = 'pollination-effect pulse';
+                            pulseEffect.style.left = `${flowerCenterX - 40}px`;
+                            pulseEffect.style.top = `${flowerCenterY + 20}px`;
+                            pulseEffect.style.width = '80px';
+                            pulseEffect.style.height = '80px';
+                            pulseEffect.style.backgroundColor = 'rgba(34, 197, 94, 0.3)';
+                            pulseEffect.style.borderRadius = '50%';
+                            simulationArea.appendChild(pulseEffect);
+                            
+                            setTimeout(() => {
+                                if (pulseEffect.parentNode) {
+                                    pulseEffect.parentNode.removeChild(pulseEffect);
+                                }
+                            }, 1500);
+                            
+                        } else if (pollen.dataset.sourceFlower === flower.id) {
+                            // Self-pollination
+                            updateFlowerStatus(flower, "self-pollinated");
+                            
+                            // Record pollination history
+                            if (!pollinationHistory[flower.id]) {
+                                pollinationHistory[flower.id] = [];
+                            }
+                            
+                            const now = new Date();
+                            const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                            
+                            pollinationHistory[flower.id].push({
+                                source: "Diri Sendiri",
+                                time: timeStr
+                            });
+                            
+                            // Show self-pollination indicator
+                            const indicator = document.createElement('div');
+                            indicator.className = 'pollination-indicator';
+                            indicator.textContent = 'Penyerbukan Sendiri!';
+                            indicator.style.backgroundColor = 'rgba(168, 85, 247, 0.9)';
+                            indicator.style.color = 'white';
+                            
+                            const flowerCenterX = flowerRect.left + flowerRect.width / 2 - simulationRect.left;
+                            const flowerCenterY = flowerRect.top - simulationRect.top;
+                            
+                            indicator.style.left = `${flowerCenterX}px`;
+                            indicator.style.top = `${flowerCenterY - 10}px`;
+                            simulationArea.appendChild(indicator);
+                            
+                            // Fade in and out
+                            setTimeout(() => {
+                                indicator.style.opacity = '1';
+                                setTimeout(() => {
+                                    indicator.style.opacity = '0';
+                                    setTimeout(() => {
+                                        if (indicator.parentNode) {
+                                            indicator.parentNode.removeChild(indicator);
+                                        }
+                                    }, 500);
+                                }, 2000);
+                            }, 10);
+                        }
+                    }
+                });
+            }
+            
+            // Move bee between flowers
+            function moveBee() {
+                if (!bee || beeActive) return;
+                
+                beeActive = true;
+                const flowers = document.querySelectorAll('.flower');
+                const simulationRect = simulationArea.getBoundingClientRect();
+                
+                let currentIndex = 0;
+                
+                function visitNextFlower() {
+                    if (currentIndex >= flowers.length) {
+                        // Bee has visited all flowers, exit the simulation area
+                        const beeRect = bee.getBoundingClientRect();
+                        bee.style.left = `${simulationRect.width + 50}px`;
+                        bee.style.transform = 'scaleX(1)';
+                        
+                        setTimeout(() => {
+                            if (bee && bee.parentNode) {
+                                bee.parentNode.removeChild(bee);
+                                bee = null;
+                            }
+                            beeActive = false;
+                        }, 2000);
+                        return;
+                    }
+                    
+                    const flower = flowers[currentIndex];
+                    const flowerRect = flower.getBoundingClientRect();
+                    const beeRect = bee.getBoundingClientRect();
+                    
+                    // Calculate position to place bee near the flower
+                    const targetX = flowerRect.left + flowerRect.width / 2 - simulationRect.left - beeRect.width / 2;
+                    const targetY = flowerRect.top + flowerRect.height / 2 - simulationRect.top - beeRect.height / 2;
+                    
+                    // Determine which direction the bee should face
+                    const currentX = parseFloat(bee.style.left) || 0;
+                    if (targetX > currentX) {
+                        bee.style.transform = 'scaleX(1)';
+                    } else {
+                        bee.style.transform = 'scaleX(-1)';
+                    }
+                    
+                    // Move bee to the flower
+                    bee.style.left = `${targetX}px`;
+                    bee.style.top = `${targetY}px`;
+                    
+                    // After reaching the flower, collect or deposit pollen
+                    setTimeout(() => {
+                        // Show indicator that bee is visiting
+                        const indicator = document.createElement('div');
+                        indicator.className = 'pollination-indicator';
+                        indicator.textContent = 'Lebah mengunjungi bunga';
+                        indicator.style.backgroundColor = 'rgba(251, 191, 36, 0.9)';
+                        indicator.style.color = 'white';
+                        
+                        const flowerCenterX = flowerRect.left + flowerRect.width / 2 - simulationRect.left;
+                        const flowerCenterY = flowerRect.top - simulationRect.top;
+                        
+                        indicator.style.left = `${flowerCenterX}px`;
+                        indicator.style.top = `${flowerCenterY - 30}px`;
+                        simulationArea.appendChild(indicator);
+                        
+                        // Fade in and out
+                        setTimeout(() => {
+                            indicator.style.opacity = '1';
+                            setTimeout(() => {
+                                indicator.style.opacity = '0';
+                                setTimeout(() => {
+                                    if (indicator.parentNode) {
+                                        indicator.parentNode.removeChild(indicator);
+                                    }
+                                }, 500);
+                            }, 1500);
+                        }, 10);
+                        
+                        // If flower has pollen, collect it
+                        if (parseInt(flower.dataset.pollenCount) > 0) {
+                            bee.dataset.hasPollenCount = parseInt(bee.dataset.hasPollenCount) + 5;
+                            bee.dataset.currentPollenSource = flower.id;
+                            flower.dataset.pollenCount = parseInt(flower.dataset.pollenCount) - 5;
+                            
+                            // Update status to show it's producing pollen
+                            updateFlowerStatus(flower, "producing");
+                            
+                            // Show pollen collection indicator
+                            const collectIndicator = document.createElement('div');
+                            collectIndicator.className = 'pollination-indicator';
+                            collectIndicator.textContent = 'Mengumpulkan serbuk sari!';
+                            collectIndicator.style.backgroundColor = 'rgba(251, 191, 36, 0.9)';
+                            collectIndicator.style.color = 'white';
+                            
+                            collectIndicator.style.left = `${flowerCenterX}px`;
+                            collectIndicator.style.top = `${flowerCenterY - 10}px`;
+                            simulationArea.appendChild(collectIndicator);
+                            
+                            // Fade in and out
+                            setTimeout(() => {
+                                collectIndicator.style.opacity = '1';
+                                setTimeout(() => {
+                                    collectIndicator.style.opacity = '0';
+                                    setTimeout(() => {
+                                        if (collectIndicator.parentNode) {
+                                            collectIndicator.parentNode.removeChild(collectIndicator);
+                                        }
+                                    }, 500);
+                                }, 1500);
+                            }, 10);
+                        }
+                        
+                        // If bee has pollen, pollinate the flower
+                        if (parseInt(bee.dataset.hasPollenCount) > 0 && bee.dataset.currentPollenSource !== flower.id) {
+                            for (let i = 0; i < 3; i++) {
+                                setTimeout(() => {
+                                    createPollen(bee, true);
+                                }, i * 200);
+                            }
+                            bee.dataset.hasPollenCount = parseInt(bee.dataset.hasPollenCount) - 3;
+                            
+                            // Show pollination indicator
+                            const pollinateIndicator = document.createElement('div');
+                            pollinateIndicator.className = 'pollination-indicator';
+                            pollinateIndicator.textContent = 'Menyebarkan serbuk sari!';
+                            pollinateIndicator.style.backgroundColor = 'rgba(34, 197, 94, 0.9)';
+                            pollinateIndicator.style.color = 'white';
+                            
+                            pollinateIndicator.style.left = `${flowerCenterX}px`;
+                            pollinateIndicator.style.top = `${flowerCenterY + 10}px`;
+                            simulationArea.appendChild(pollinateIndicator);
+                            
+                            // Fade in and out
+                            setTimeout(() => {
+                                pollinateIndicator.style.opacity = '1';
+                                setTimeout(() => {
+                                    pollinateIndicator.style.opacity = '0';
+                                    setTimeout(() => {
+                                        if (pollinateIndicator.parentNode) {
+                                            pollinateIndicator.parentNode.removeChild(pollinateIndicator);
+                                        }
+                                    }, 500);
+                                }, 1500);
+                            }, 10);
+                        }
+                        
+                        // Move to next flower after a delay
+                        currentIndex++;
+                        setTimeout(visitNextFlower, 2000);
+                    }, 1000);
+                }
+                
+                // Start visiting flowers
+                visitNextFlower();
+            }
+            
+            // Create wind particles
+            function createWindParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'wind-particle';
+                
+                const size = 2 + Math.random() * 4;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Start from left side
+                particle.style.left = '0px';
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                simulationArea.appendChild(particle);
+                
+                // Animate the particle
+                const duration = 2000 + Math.random() * 3000;
+                const startTime = performance.now();
+                
+                function updateParticle(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = elapsed / duration;
+                    
+                    if (progress >= 1) {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                        return;
+                    }
+                    
+                    const xPos = progress * simulationArea.offsetWidth;
+                    const yPos = parseFloat(particle.style.top) + Math.sin(progress * 10) * 2;
+                    
+                    particle.style.left = `${xPos}px`;
+                    particle.style.top = `${yPos}`;
+                    
+                    // Check if wind is moving any pollen
+                    const flowers = document.querySelectorAll('.flower');
+                    flowers.forEach(flower => {
+                        const flowerRect = flower.getBoundingClientRect();
+                        const particleRect = particle.getBoundingClientRect();
+                        
+                        if (
+                            particleRect.left < flowerRect.right &&
+                            particleRect.right > flowerRect.left &&
+                            particleRect.top < flowerRect.bottom &&
+                            particleRect.bottom > flowerRect.top &&
+                            parseInt(flower.dataset.pollenCount) > 0 &&
+                            Math.random() > 0.95 // Only occasionally trigger pollen release
+                        ) {
+                            releasePollen(flower);
+                            flower.dataset.pollenCount = parseInt(flower.dataset.pollenCount) - 1;
+                            
+                            // Update status to show it's producing pollen
+                            updateFlowerStatus(flower, "producing");
+                        }
+                    });
+                    
+                    requestAnimationFrame(updateParticle);
+                }
+                
+                requestAnimationFrame(updateParticle);
+            }
+            
+            // Toggle wind simulation
+            function toggleWind() {
+                if (windActive) {
+                    clearInterval(windInterval);
+                    windActive = false;
+                    toggleWindButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        Aktifkan Angin
+                    `;
+                    toggleWindButton.classList.remove('bg-red-500');
+                    toggleWindButton.classList.add('bg-blue-500');
+                } else {
+                    windActive = true;
+                    toggleWindButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                        Matikan Angin
+                    `;
+                    toggleWindButton.classList.remove('bg-blue-500');
+                    toggleWindButton.classList.add('bg-red-500');
+                    
+                    // Create wind particles periodically
+                    windInterval = setInterval(() => {
+                        for (let i = 0; i < 3; i++) {
+                            createWindParticle();
+                        }
+                    }, 300);
+                }
+            }
+            
+            // Reset simulation
+            function resetSimulation() {
+                // Clear wind
+                if (windActive) {
+                    clearInterval(windInterval);
+                    windActive = false;
+                    toggleWindButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        Aktifkan Angin
+                    `;
+                    toggleWindButton.classList.remove('bg-red-500');
+                    toggleWindButton.classList.add('bg-blue-500');
+                }
+                
+                // Remove bee
+                if (bee && bee.parentNode) {
+                    bee.parentNode.removeChild(bee);
+                    bee = null;
+                }
+                beeActive = false;
+                
+                // Remove all pollen
+                const pollens = document.querySelectorAll('.pollen');
+                pollens.forEach(pollen => {
+                    if (pollen.parentNode) {
+                        pollen.parentNode.removeChild(pollen);
+                    }
+                });
+                
+                // Remove all wind particles
+                const windParticles = document.querySelectorAll('.wind-particle');
+                windParticles.forEach(particle => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                });
+                
+                // Remove all indicators and effects
+                const indicators = document.querySelectorAll('.pollination-indicator, .pollen-source-indicator');
+                indicators.forEach(indicator => {
+                    if (indicator.parentNode) {
+                        indicator.parentNode.removeChild(indicator);
+                    }
+                });
+                
+                // Reset flowers
+                const flowers = document.querySelectorAll('.flower');
+                flowers.forEach(flower => {
+                    flower.dataset.pollenCount = 20;
+                    flower.dataset.pollinated = "false";
+                    flower.querySelector('.pollination-effect').style.opacity = '0';
+                    updateFlowerStatus(flower, "none");
+                });
+                
+                // Reset pollination history
+                pollinationHistory = {};
+                
+                // Add floating animation to flowers
+                flowers.forEach((flower, index) => {
+                    flower.classList.add('floating');
+                    flower.style.animationDelay = `${index * 0.2}s`;
+                });
+            }
+            
+            // Event listeners
+            sendBeeButton.addEventListener('click', () => {
+                createBee();
+                setTimeout(moveBee, 500);
+            });
+            
+            toggleWindButton.addEventListener('click', toggleWind);
+            resetButton.addEventListener('click', resetSimulation);
+            
+            // Initialize
+            resetSimulation();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9663d452b639ea7a',t:'MTc1MzY5OTk3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
