@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ED-Share - Worksheet & Simulasi Interaktif Gratis Tanpa Login</title>
+    <title>ED-Share - Simulasi Interaktif Gratis Tanpa Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -52,17 +52,17 @@
     <section id="beranda" class="hero-gradient text-white py-20">
         <div class="container mx-auto px-4 text-center">
             <h1 class="text-4xl md:text-6xl font-bold mb-6">
-                ED-Share: Worksheet & Simulasi Interaktif Gratis Tanpa Login
+                ED-Share: Simulasi Interaktif Gratis Tanpa Login
             </h1>
-            <p class="text-xl md:text-2xl mb-8 opacity-90 max-w-4xl mx-auto">
+           <!-- <p class="text-xl md:text-2xl mb-8 opacity-90 max-w-4xl mx-auto">
                 Akses ribuan sumber belajar langsung, bisa dimainkan atau dicetak, tanpa batas dan tanpa biaya.
-            </p>
+            </p>-->
             <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <button onclick="showTab('worksheet')" 
+                <!--<button onclick="showTab('worksheet')" 
                         class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-xl hover:bg-gray-100 transition-colors shadow-lg">
                     <i class="fas fa-file-alt mr-3 text-2xl"></i>
                     Lihat Worksheet
-                </button>
+                </button>-->
                 <button onclick="showTab('simulasi')" 
                         class="bg-transparent border-3 border-white text-white px-8 py-4 rounded-xl font-semibold text-xl hover:bg-white hover:text-blue-600 transition-colors shadow-lg">
                     <i class="fas fa-flask mr-3 text-2xl"></i>
@@ -77,12 +77,12 @@
         <div class="container mx-auto px-4">
             <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">Galeri Konten Interaktif</h2>
             <!-- Tab Navigation -->
-            <div class="flex justify-center mb-8">
+           <!-- <div class="flex justify-center mb-8">
                 <div class="bg-gray-100 p-2 rounded-xl">
                     <button id="tab-worksheet" onclick="showTab('worksheet')" 
                             class="tab-active px-8 py-4 rounded-lg font-semibold text-lg transition-all">
                         <i class="fas fa-file-alt mr-2"></i> Worksheet
-                    </button>
+                    </button>-->
                     <button id="tab-simulasi" onclick="showTab('simulasi')" 
                             class="tab-inactive px-8 py-4 rounded-lg font-semibold text-lg transition-all ml-2">
                         <i class="fas fa-flask mr-2"></i> Simulasi
@@ -138,7 +138,7 @@
                 <div class="text-center mb-8">
                     <i class="fas fa-headset text-6xl text-orange-500 mb-4"></i>
                     <h2 class="text-3xl font-bold text-gray-800 mb-4">Butuh Bantuan?</h2>
-                    <p class="text-gray-600 text-lg">Kirim permintaan worksheet atau simulasi khusus via WhatsApp</p>
+                    <p class="text-gray-600 text-lg">Kirim permintaan simulasi khusus via WhatsApp</p>
                 </div>
                 <form id="help-form" class="space-y-6">
                     <div>
@@ -165,7 +165,7 @@
                             <option value="SMA Kelas 12">SMA Kelas 12</option>
                         </select>
                     </div>
-                    <div>
+                   <!-- <div>
                         <label class="block text-gray-700 font-semibold mb-2 text-lg">Jenis Permintaan</label>
                         <div class="flex space-x-4">
                             <label class="flex items-center">
@@ -177,7 +177,7 @@
                                 <span class="text-lg"><i class="fas fa-flask mr-2"></i> Simulasi</span>
                             </label>
                         </div>
-                    </div>
+                    </div>-->
                     <div>
                         <label class="block text-gray-700 font-semibold mb-2 text-lg">Materi/Topik yang Diminta</label>
                         <textarea id="materi" required rows="4" 
@@ -253,7 +253,7 @@
                     <span class="text-3xl font-bold">ED-Share</span>
                 </div>
                 <p class="text-gray-300 text-lg max-w-2xl mx-auto">
-                    Platform pembelajaran gratis dengan ribuan worksheet dan simulasi interaktif untuk mendukung pendidikan di Indonesia.
+                    Platform pembelajaran gratis simulasi interaktif untuk mendukung pendidikan di Indonesia.
                 </p>
             </div>
             <div class="flex flex-wrap justify-center space-x-8 mb-8 text-lg">
