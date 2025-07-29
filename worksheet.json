@@ -1,0 +1,164 @@
+[
+    {
+        "id": 1,
+        "title": "Luas Segitiga",
+        "thumbnail": "<i class='fas fa-ruler-combined text-4xl text-blue-600'></i>",
+        "url": "worksheet/luas-segitiga.html",
+        "description": "Belajar menghitung luas segitiga dengan berbagai metode",
+        "keywords": "matematika geometri luas segitiga",
+        "category": "matematika"
+    },
+    {
+        "id": 2,
+        "title": "Persamaan Linear",
+        "thumbnail": "<i class='fas fa-chart-line text-4xl text-green-600'></i>",
+        "url": "worksheet/persamaan-linear.html",
+        "description": "Memahami dan menyelesaikan persamaan linear",
+        "keywords": "matematika aljabar persamaan linear",
+        "category": "matematika"
+    },
+    {
+        "id": 3,
+        "title": "Tata Surya",
+        "thumbnail": "<i class='fas fa-globe text-4xl text-blue-500'></i>",
+        "url": "worksheet/tata-surya.html",
+        "description": "Mengenal planet-planet dalam tata surya",
+        "keywords": "ipa astronomi tata surya planet",
+        "category": "ipa"
+    },
+    {
+        "id": 4,
+        "title": "Fotosintesis",
+        "thumbnail": "<i class='fas fa-leaf text-4xl text-green-500'></i>",
+        "url": "worksheet/fotosintesis.html",
+        "description": "Proses fotosintesis pada tumbuhan",
+        "keywords": "ipa biologi fotosintesis tumbuhan",
+        "category": "ipa"
+    },
+    {
+        "id": 5,
+        "title": "Bangun Datar",
+        "thumbnail": "<i class='fas fa-shapes text-4xl text-purple-600'></i>",
+        "url": "worksheet/bangun-datar.html",
+        "description": "Mengenal berbagai jenis bangun datar",
+        "keywords": "matematika geometri bangun datar",
+        "category": "matematika"
+    },
+    {
+        "id": 6,
+        "title": "Sistem Pencernaan",
+        "thumbnail": "<i class='fas fa-lungs text-4xl text-red-500'></i>",
+        "url": "worksheet/sistem-pencernaan.html",
+        "description": "Organ dan proses pencernaan manusia",
+        "keywords": "ipa biologi pencernaan manusia",
+        "category": "ipa"
+    },
+    {
+        "id": 7,
+        "title": "Pecahan",
+        "thumbnail": "<i class='fas fa-divide text-4xl text-orange-600'></i>",
+        "url": "worksheet/pecahan.html",
+        "description": "Operasi hitung pecahan sederhana",
+        "keywords": "matematika pecahan operasi hitung",
+        "category": "matematika"
+    },
+    {
+        "id": 8,
+        "title": "Siklus Air",
+        "thumbnail": "<i class='fas fa-tint text-4xl text-blue-400'></i>",
+        "url": "worksheet/siklus-air.html",
+        "description": "Memahami siklus air di alam",
+        "keywords": "ipa geografi siklus air",
+        "category": "ipa"
+    },
+    {
+        "id": 9,
+        "title": "Kalimat Efektif",
+        "thumbnail": "<i class='fas fa-pen text-4xl text-indigo-600'></i>",
+        "url": "worksheet/kalimat-efektif.html",
+        "description": "Menyusun kalimat yang efektif",
+        "keywords": "bahasa indonesia kalimat efektif",
+        "category": "bahasa"
+    },
+    {
+        "id": 10,
+        "title": "Energi dan Perubahannya",
+        "thumbnail": "<i class='fas fa-bolt text-4xl text-yellow-500'></i>",
+        "url": "worksheet/energi.html",
+        "description": "Jenis-jenis energi dan perubahannya",
+        "keywords": "ipa fisika energi perubahan",
+        "category": "ipa"
+    },
+    {
+        "id": 11,
+        "title": "Peta dan Skala",
+        "thumbnail": "<i class='fas fa-map text-4xl text-green-600'></i>",
+        "url": "worksheet/peta-skala.html",
+        "description": "Membaca peta dan menghitung skala",
+        "keywords": "ips geografi peta skala",
+        "category": "ips"
+    },
+    {
+        "id": 12,
+        "title": "Cerita Rakyat",
+        "thumbnail": "<i class='fas fa-book text-4xl text-purple-500'></i>",
+        "url": "worksheet/cerita-rakyat.html",
+        "description": "Memahami struktur cerita rakyat",
+        "keywords": "bahasa indonesia cerita rakyat",
+        "category": "bahasa"
+    },
+    {
+        "id": 13,
+        "title": "Statistika Dasar",
+        "thumbnail": "<i class='fas fa-chart-bar text-4xl text-blue-600'></i>",
+        "url": "worksheet/statistika.html",
+        "description": "Mengenal konsep dasar statistika",
+        "keywords": "matematika statistika data",
+        "category": "matematika"
+    },
+    {
+        "id": 14,
+        "title": "Sejarah Indonesia",
+        "thumbnail": "<i class='fas fa-landmark text-4xl text-red-600'></i>",
+        "url": "worksheet/sejarah-indonesia.html",
+        "description": "Mempelajari sejarah kemerdekaan Indonesia",
+        "keywords": "ips sejarah indonesia kemerdekaan",
+        "category": "ips"
+    },
+    {
+        "id": 15,
+        "title": "Puisi dan Pantun",
+        "thumbnail": "<i class='fas fa-feather-alt text-4xl text-pink-500'></i>",
+        "url": "worksheet/puisi-pantun.html",
+        "description": "Memahami struktur puisi dan pantun",
+        "keywords": "bahasa indonesia puisi pantun sastra",
+        "category": "bahasa"
+    },
+    {
+        "id": 16,
+        "title": "Trigonometri",
+        "thumbnail": "<i class='fas fa-calculator text-4xl text-indigo-600'></i>",
+        "url": "worksheet/trigonometri.html",
+        "description": "Dasar-dasar trigonometri dan aplikasinya",
+        "keywords": "matematika trigonometri sudut",
+        "category": "matematika"
+    },
+    {
+        "id": 17,
+        "title": "Ekologi",
+        "thumbnail": "<i class='fas fa-tree text-4xl text-green-600'></i>",
+        "url": "worksheet/ekologi.html",
+        "description": "Hubungan makhluk hidup dengan lingkungan",
+        "keywords": "ipa biologi ekologi lingkungan",
+        "category": "ipa"
+    },
+    {
+        "id": 18,
+        "title": "Geografi Indonesia",
+        "thumbnail": "<i class='fas fa-mountain text-4xl text-brown-600'></i>",
+        "url": "worksheet/geografi-indonesia.html",
+        "description": "Kondisi geografis wilayah Indonesia",
+        "keywords": "ips geografi indonesia wilayah",
+        "category": "ips"
+    }
+]

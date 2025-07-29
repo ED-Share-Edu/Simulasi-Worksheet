@@ -3,27 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EDShare - Platform Simulasi Pembelajaran SMP</title>
+    <title>ED-Share - Worksheet & Simulasi Interaktif Gratis Tanpa Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/style.css" />
 </head>
-<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+<body class="bg-gray-50">
     <!-- Header -->
-    <div id="header"></div>
-    <!-- Hero -->
-    <div id="hero"></div>
-    <!-- Tabs, Search, Filter -->
-    <div id="tabs"></div>
-    <!-- Content Grid -->
-    <div id="content-grid"></div>
-    <!-- Services / Tentang -->
-    <div id="services"></div>
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-600 text-white p-3 rounded-xl">
+                        <i class="fas fa-share-alt text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-800">ED-Share</span>
+                </div>
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#beranda" class="text-gray-700 hover:text-blue-600 font-medium transition-colors text-lg">Beranda</a>
+                    <a href="#donasi" class="text-gray-700 hover:text-blue-600 font-medium transition-colors text-lg">Donasi</a>
+                    <a href="#bantuan" class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors font-medium text-lg">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        Bantuan
+                    </a>
+                </nav>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-700">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
+                <div class="flex flex-col space-y-4">
+                    <a href="#beranda" class="text-gray-700 hover:text-blue-600 font-medium text-lg">Beranda</a>
+                    <a href="#donasi" class="text-gray-700 hover:text-blue-600 font-medium text-lg">Donasi</a>
+                    <a href="#bantuan" class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors font-medium text-lg w-fit">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        Bantuan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="beranda" class="hero-gradient text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                ED-Share: Worksheet & Simulasi Interaktif Gratis Tanpa Login
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 opacity-90 max-w-4xl mx-auto">
+                Akses ribuan sumber belajar langsung, bisa dimainkan atau dicetak, tanpa batas dan tanpa biaya.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                <button onclick="showTab('worksheet')" 
+                        class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-xl hover:bg-gray-100 transition-colors shadow-lg">
+                    <i class="fas fa-file-alt mr-3 text-2xl"></i>
+                    Lihat Worksheet
+                </button>
+                <button onclick="showTab('simulasi')" 
+                        class="bg-transparent border-3 border-white text-white px-8 py-4 rounded-xl font-semibold text-xl hover:bg-white hover:text-blue-600 transition-colors shadow-lg">
+                    <i class="fas fa-flask mr-3 text-2xl"></i>
+                    Mainkan Simulasi
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeri Konten Interaktif -->
+    <section id="content-gallery" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">Galeri Konten Interaktif</h2>
+            <!-- Tab Navigation -->
+            <div class="flex justify-center mb-8">
+                <div class="bg-gray-100 p-2 rounded-xl">
+                    <button id="tab-worksheet" onclick="showTab('worksheet')" 
+                            class="tab-active px-8 py-4 rounded-lg font-semibold text-lg transition-all">
+                        <i class="fas fa-file-alt mr-2"></i> Worksheet
+                    </button>
+                    <button id="tab-simulasi" onclick="showTab('simulasi')" 
+                            class="tab-inactive px-8 py-4 rounded-lg font-semibold text-lg transition-all ml-2">
+                        <i class="fas fa-flask mr-2"></i> Simulasi
+                    </button>
+                </div>
+            </div>
+            <!-- Search Bar -->
+            <div class="max-w-4xl mx-auto mb-8">
+                <div class="relative mb-6">
+                    <input type="text" id="search-input" placeholder="Cari worksheet atau simulasi..." 
+                           class="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none pl-14">
+                    <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
+                </div>
+                <!-- Category Filter -->
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="filterByCategory('semua')" id="filter-semua" 
+                            class="category-filter-active px-6 py-3 rounded-lg font-semibold transition-all">
+                        Semua
+                    </button>
+                    <button onclick="filterByCategory('matematika')" id="filter-matematika" 
+                            class="category-filter-inactive px-6 py-3 rounded-lg font-semibold transition-all">
+                        Matematika
+                    </button>
+                    <button onclick="filterByCategory('ipa')" id="filter-ipa" 
+                            class="category-filter-inactive px-6 py-3 rounded-lg font-semibold transition-all">
+                        IPA
+                    </button>
+                    <button onclick="filterByCategory('bahasa')" id="filter-bahasa" 
+                            class="category-filter-inactive px-6 py-3 rounded-lg font-semibold transition-all">
+                        Bahasa Indonesia
+                    </button>
+                    <button onclick="filterByCategory('ips')" id="filter-ips" 
+                            class="category-filter-inactive px-6 py-3 rounded-lg font-semibold transition-all">
+                        IPS
+                    </button>
+                </div>
+            </div>
+            <!-- Content Grid -->
+            <div id="content-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-8">
+                <!-- Content will be loaded here -->
+            </div>
+            <!-- Pagination -->
+            <div id="pagination" class="flex justify-center space-x-2">
+                <!-- Pagination buttons will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Bantuan - Form WhatsApp -->
+    <section id="bantuan" class="py-16 bg-gradient-to-r from-orange-400 to-pink-400">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+                <div class="text-center mb-8">
+                    <i class="fas fa-headset text-6xl text-orange-500 mb-4"></i>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Butuh Bantuan?</h2>
+                    <p class="text-gray-600 text-lg">Kirim permintaan worksheet atau simulasi khusus via WhatsApp</p>
+                </div>
+                <form id="help-form" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2 text-lg">Nama</label>
+                        <input type="text" id="nama" required 
+                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2 text-lg">Kelas</label>
+                        <select id="kelas" required 
+                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg">
+                            <option value="">Pilih Kelas</option>
+                            <option value="SD Kelas 1">SD Kelas 1</option>
+                            <option value="SD Kelas 2">SD Kelas 2</option>
+                            <option value="SD Kelas 3">SD Kelas 3</option>
+                            <option value="SD Kelas 4">SD Kelas 4</option>
+                            <option value="SD Kelas 5">SD Kelas 5</option>
+                            <option value="SD Kelas 6">SD Kelas 6</option>
+                            <option value="SMP Kelas 7">SMP Kelas 7</option>
+                            <option value="SMP Kelas 8">SMP Kelas 8</option>
+                            <option value="SMP Kelas 9">SMP Kelas 9</option>
+                            <option value="SMA Kelas 10">SMA Kelas 10</option>
+                            <option value="SMA Kelas 11">SMA Kelas 11</option>
+                            <option value="SMA Kelas 12">SMA Kelas 12</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2 text-lg">Jenis Permintaan</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="jenis" value="Worksheet" required class="mr-2 scale-125">
+                                <span class="text-lg"><i class="fas fa-file-alt mr-2"></i> Worksheet</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="jenis" value="Simulasi" required class="mr-2 scale-125">
+                                <span class="text-lg"><i class="fas fa-flask mr-2"></i> Simulasi</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2 text-lg">Materi/Topik yang Diminta</label>
+                        <textarea id="materi" required rows="4" 
+                                  class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg"
+                                  placeholder="Jelaskan materi atau topik yang Anda butuhkan..."></textarea>
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-green-500 text-white py-4 rounded-lg font-semibold text-xl hover:bg-green-600 transition-colors">
+                        <i class="fab fa-whatsapp mr-3 text-2xl"></i>
+                        Kirim ke WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donasi -->
+    <section id="donasi" class="py-16 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-8">
+                <i class="fas fa-heart text-6xl text-pink-300 mb-4"></i>
+                <h2 class="text-4xl font-bold mb-4">Dukung ED-Share</h2>
+                <p class="text-xl md:text-2xl mb-8 opacity-90 max-w-4xl mx-auto">
+                    Dukung ED-Share agar terus menyediakan konten pendidikan gratis dan berkualitas. Setiap kontribusi Anda sangat berarti!
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <!-- QRIS -->
+                <div class="bg-white text-gray-800 p-8 rounded-2xl shadow-xl">
+                    <i class="fas fa-qrcode text-4xl text-green-600 mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-4">QRIS</h3>
+                    <div class="bg-gray-100 p-6 rounded-xl mb-4">
+                        <i class="fas fa-mobile-alt text-8xl text-gray-600 mb-2"></i>
+                        <p class="text-sm text-gray-600">Scan QR Code untuk donasi</p>
+                    </div>
+                    <button onclick="showQRIS()" 
+                            class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                        Lihat QR Code
+                    </button>
+                </div>
+                <!-- Trakteer -->
+                <div class="bg-white text-gray-800 p-8 rounded-2xl shadow-xl">
+                    <i class="fas fa-coffee text-4xl text-red-500 mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-4">Trakteer</h3>
+                    <p class="text-gray-600 mb-6">Traktir kami kopi untuk semangat mengembangkan konten</p>
+                    <a href="https://trakteer.id/edshare" target="_blank"
+                       class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors font-semibold inline-block">
+                        Buka Trakteer
+                    </a>
+                </div>
+                <!-- Saweria -->
+                <div class="bg-white text-gray-800 p-8 rounded-2xl shadow-xl">
+                    <i class="fas fa-gift text-4xl text-yellow-500 mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-4">Saweria</h3>
+                    <p class="text-gray-600 mb-6">Berikan dukungan melalui platform Saweria</p>
+                    <a href="https://saweria.co/edshare" target="_blank"
+                       class="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold inline-block">
+                        Buka Saweria
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
-    <div id="footer"></div>
-    <!-- Modals -->
-    <div id="modal-donation"></div>
-    <div id="modal-contact"></div>
-    <script src="assets/main.js"></script>
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center space-x-3 mb-4">
+                    <div class="bg-blue-600 text-white p-3 rounded-xl">
+                        <i class="fas fa-share-alt text-2xl"></i>
+                    </div>
+                    <span class="text-3xl font-bold">ED-Share</span>
+                </div>
+                <p class="text-gray-300 text-lg max-w-2xl mx-auto">
+                    Platform pembelajaran gratis dengan ribuan worksheet dan simulasi interaktif untuk mendukung pendidikan di Indonesia.
+                </p>
+            </div>
+            <div class="flex flex-wrap justify-center space-x-8 mb-8 text-lg">
+                <a href="#beranda" class="text-gray-300 hover:text-white transition-colors">Beranda</a>
+                <a href="#donasi" class="text-gray-300 hover:text-white transition-colors">Donasi</a>
+                <a href="#bantuan" class="text-gray-300 hover:text-white transition-colors">Kontak</a>
+            </div>
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p class="text-gray-300 text-lg">
+                    © 2025 ED-Share. Bebas digunakan untuk pendidikan.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- QRIS Modal -->
+    <div id="qris-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center">
+            <h3 class="text-2xl font-bold mb-4">QRIS Donasi</h3>
+            <div class="bg-gray-100 p-8 rounded-xl mb-6">
+                <i class="fas fa-mobile-alt text-8xl text-gray-600 mb-4"></i>
+                <p class="text-gray-600">Scan dengan aplikasi pembayaran digital Anda</p>
+            </div>
+            <button onclick="closeQRISModal()" 
+                    class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors">
+                Tutup
+            </button>
+        </div>
+    </div>
+    <script src="main.js"></script>
 </body>
 </html>

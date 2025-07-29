@@ -1,0 +1,40 @@
+.hero-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #f97316 100%);
+}
+.card-hover {
+    transition: all 0.3s ease;
+}
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.tab-active {
+    background: #3b82f6;
+    color: white;
+}
+.tab-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+.pagination-btn {
+    transition: all 0.2s ease;
+}
+.pagination-btn:hover {
+    transform: scale(1.05);
+}
+.search-highlight {
+    background-color: #fef3c7;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+.category-filter-active {
+    background: #3b82f6;
+    color: white;
+}
+.category-filter-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+.category-filter-inactive:hover {
+    background: #e5e7eb;
+}

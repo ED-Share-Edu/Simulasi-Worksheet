@@ -1,0 +1,218 @@
+[
+    {
+        "id": 1,
+        "title": "Gaya dan Gerak",
+        "thumbnail": "<i class='fas fa-rocket text-4xl text-red-500'></i>",
+        "url": "simulasi/materi-gaya.html",
+        "description": "Simulasi interaktif tentang gaya dan gerak benda",
+        "keywords": "fisika gaya gerak simulasi",
+        "category": "ipa"
+    },
+    {
+        "id": 2,
+        "title": "Rangkaian Listrik",
+        "thumbnail": "<i class='fas fa-plug text-4xl text-yellow-500'></i>",
+        "url": "simulasi/rangkaian-listrik.html",
+        "description": "Buat dan uji rangkaian listrik virtual",
+        "keywords": "fisika listrik rangkaian simulasi",
+        "category": "ipa"
+    },
+    {
+        "id": 3,
+        "title": "Reaksi Kimia",
+        "thumbnail": "<i class='fas fa-flask text-4xl text-green-500'></i>",
+        "url": "simulasi/reaksi-kimia.html",
+        "description": "Eksperimen kimia virtual yang aman",
+        "keywords": "kimia reaksi eksperimen simulasi",
+        "category": "ipa"
+    },
+    {
+        "id": 4,
+        "title": "Gelombang Suara",
+        "thumbnail": "<i class='fas fa-volume-up text-4xl text-blue-500'></i>",
+        "url": "simulasi/gelombang-suara.html",
+        "description": "Visualisasi gelombang suara dan frekuensi",
+        "keywords": "fisika gelombang suara frekuensi",
+        "category": "ipa"
+    },
+    {
+        "id": 5,
+        "title": "Ekosistem",
+        "thumbnail": "<i class='fas fa-seedling text-4xl text-green-600'></i>",
+        "url": "simulasi/ekosistem.html",
+        "description": "Simulasi interaksi dalam ekosistem",
+        "keywords": "biologi ekosistem lingkungan simulasi",
+        "category": "ipa"
+    },
+    {
+        "id": 6,
+        "title": "Tata Surya 3D",
+        "thumbnail": "<i class='fas fa-globe-americas text-4xl text-blue-600'></i>",
+        "url": "simulasi/tata-surya-3d.html",
+        "description": "Jelajahi tata surya dalam 3D interaktif",
+        "keywords": "astronomi tata surya 3d simulasi",
+        "category": "ipa"
+    },
+    {
+        "id": 7,
+        "title": "Kalkulator Matematika",
+        "thumbnail": "<i class='fas fa-calculator text-4xl text-gray-600'></i>",
+        "url": "simulasi/kalkulator.html",
+        "description": "Kalkulator interaktif untuk berbagai operasi",
+        "keywords": "matematika kalkulator operasi hitung",
+        "category": "matematika"
+    },
+    {
+        "id": 8,
+        "title": "Anatomi Tubuh",
+        "thumbnail": "<i class='fas fa-user-md text-4xl text-red-600'></i>",
+        "url": "simulasi/anatomi-tubuh.html",
+        "description": "Eksplorasi organ tubuh manusia",
+        "keywords": "biologi anatomi tubuh manusia",
+        "category": "ipa"
+    },
+    {
+        "id": 9,
+        "title": "Cuaca dan Iklim",
+        "thumbnail": "<i class='fas fa-cloud-sun text-4xl text-blue-400'></i>",
+        "url": "simulasi/cuaca-iklim.html",
+        "description": "Simulasi perubahan cuaca dan iklim",
+        "keywords": "geografi cuaca iklim simulasi",
+        "category": "ips"
+    },
+    {
+        "id": 10,
+        "title": "Mesin Sederhana",
+        "thumbnail": "<i class='fas fa-cog text-4xl text-gray-500'></i>",
+        "url": "simulasi/mesin-sederhana.html",
+        "description": "Cara kerja berbagai mesin sederhana",
+        "keywords": "fisika mesin sederhana katrol",
+        "category": "ipa"
+    },
+    {
+        "id": 11,
+        "title": "Magnet dan Medan Magnet",
+        "thumbnail": "<i class='fas fa-magnet text-4xl text-red-500'></i>",
+        "url": "simulasi/magnet.html",
+        "description": "Eksplorasi sifat magnet dan medan magnetnya",
+        "keywords": "fisika magnet medan magnetik",
+        "category": "ipa"
+    },
+    {
+        "id": 12,
+        "title": "Sistem Pernapasan",
+        "thumbnail": "<i class='fas fa-lungs text-4xl text-pink-500'></i>",
+        "url": "simulasi/sistem-pernapasan.html",
+        "description": "Cara kerja sistem pernapasan manusia",
+        "keywords": "biologi pernapasan paru-paru",
+        "category": "ipa"
+    },
+    {
+        "id": 13,
+        "title": "Cahaya dan Bayangan",
+        "thumbnail": "<i class='fas fa-lightbulb text-4xl text-yellow-400'></i>",
+        "url": "simulasi/cahaya-bayangan.html",
+        "description": "Simulasi perambatan cahaya dan pembentukan bayangan",
+        "keywords": "fisika cahaya bayangan optik",
+        "category": "ipa"
+    },
+    {
+        "id": 14,
+        "title": "Siklus Karbon",
+        "thumbnail": "<i class='fas fa-recycle text-4xl text-green-500'></i>",
+        "url": "simulasi/siklus-karbon.html",
+        "description": "Memahami siklus karbon di alam",
+        "keywords": "biologi karbon siklus lingkungan",
+        "category": "ipa"
+    },
+    {
+        "id": 15,
+        "title": "Getaran dan Gelombang",
+        "thumbnail": "<i class='fas fa-wave-square text-4xl text-purple-500'></i>",
+        "url": "simulasi/getaran-gelombang.html",
+        "description": "Visualisasi getaran dan gelombang",
+        "keywords": "fisika getaran gelombang frekuensi",
+        "category": "ipa"
+    },
+    {
+        "id": 16,
+        "title": "Sistem Peredaran Darah",
+        "thumbnail": "<i class='fas fa-heartbeat text-4xl text-red-500'></i>",
+        "url": "simulasi/peredaran-darah.html",
+        "description": "Simulasi sistem peredaran darah manusia",
+        "keywords": "biologi jantung darah sirkulasi",
+        "category": "ipa"
+    },
+    {
+        "id": 17,
+        "title": "Asam dan Basa",
+        "thumbnail": "<i class='fas fa-vial text-4xl text-orange-500'></i>",
+        "url": "simulasi/asam-basa.html",
+        "description": "Uji pH dan reaksi asam basa",
+        "keywords": "kimia asam basa pH indikator",
+        "category": "ipa"
+    },
+    {
+        "id": 18,
+        "title": "Momentum dan Impuls",
+        "thumbnail": "<i class='fas fa-bowling-ball text-4xl text-gray-700'></i>",
+        "url": "simulasi/momentum-impuls.html",
+        "description": "Simulasi momentum dan impuls benda",
+        "keywords": "fisika momentum impuls tumbukan",
+        "category": "ipa"
+    },
+    {
+        "id": 19,
+        "title": "Struktur Atom",
+        "thumbnail": "<i class='fas fa-atom text-4xl text-blue-500'></i>",
+        "url": "simulasi/struktur-atom.html",
+        "description": "Model struktur atom dan elektron",
+        "keywords": "kimia atom elektron proton neutron",
+        "category": "ipa"
+    },
+    {
+        "id": 20,
+        "title": "Sistem Ekskresi",
+        "thumbnail": "<i class='fas fa-kidneys text-4xl text-brown-500'></i>",
+        "url": "simulasi/sistem-ekskresi.html",
+        "description": "Cara kerja sistem ekskresi manusia",
+        "keywords": "biologi ekskresi ginjal pembuangan",
+        "category": "ipa"
+    },
+    {
+        "id": 21,
+        "title": "Kalor dan Perpindahan Panas",
+        "thumbnail": "<i class='fas fa-fire text-4xl text-red-400'></i>",
+        "url": "simulasi/kalor-panas.html",
+        "description": "Simulasi perpindahan kalor dan panas",
+        "keywords": "fisika kalor panas konduksi konveksi",
+        "category": "ipa"
+    },
+    {
+        "id": 22,
+        "title": "Genetika Sederhana",
+        "thumbnail": "<i class='fas fa-dna text-4xl text-green-400'></i>",
+        "url": "simulasi/genetika.html",
+        "description": "Simulasi pewarisan sifat genetik",
+        "keywords": "biologi genetika DNA kromosom",
+        "category": "ipa"
+    },
+    {
+        "id": 23,
+        "title": "Tekanan Zat",
+        "thumbnail": "<i class='fas fa-compress-arrows-alt text-4xl text-blue-600'></i>",
+        "url": "simulasi/tekanan-zat.html",
+        "description": "Simulasi tekanan pada zat padat, cair, gas",
+        "keywords": "fisika tekanan zat padat cair gas",
+        "category": "ipa"
+    },
+    {
+        "id": 24,
+        "title": "Rantai Makanan",
+        "thumbnail": "<i class='fas fa-fish text-4xl text-blue-500'></i>",
+        "url": "simulasi/rantai-makanan.html",
+        "description": "Simulasi rantai makanan dalam ekosistem",
+        "keywords": "biologi rantai makanan ekosistem predator",
+        "category": "ipa"
+    }
+]
