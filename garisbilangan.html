@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Garis Bilangan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .number-line {
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            height: 4px;
+            position: relative;
+        }
+        
+        .tick {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: #1f2937;
+            top: -8px;
+        }
+        
+        .major-tick {
+            height: 30px;
+            width: 3px;
+            background: #111827;
+            top: -13px;
+        }
+        
+        .number-label {
+            position: absolute;
+            top: 25px;
+            transform: translateX(-50%);
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .pointer {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 12px solid #ef4444;
+            top: -16px;
+            transform: translateX(-50%);
+            transition: all 1.5s ease;
+        }
+        
+        .operation-visual {
+            position: absolute;
+            top: -40px;
+            transform: translateX(-50%);
+            background: #fbbf24;
+            color: #92400e;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 1.2s ease;
+        }
+        
+        .operation-visual.show {
+            opacity: 1;
+            top: -50px;
+        }
+        
+        .jump-arc {
+            position: absolute;
+            border: 2px solid #10b981;
+            border-bottom: none;
+            border-radius: 50px 50px 0 0;
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+        
+        .jump-arc.show {
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">🔢 Simulasi Garis Bilangan</h1>
+            <p class="text-gray-600 text-lg">Pelajari operasi matematika dengan visualisasi interaktif</p>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Position Controls -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">🎯 Kontrol Posisi</h3>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Posisi Saat Ini:</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="currentPos" value="0" min="-20" max="20" 
+                                   class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <button onclick="setPosition()" 
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Set Posisi
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="moveLeft()" 
+                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                            ← Kiri (-1)
+                        </button>
+                        <button onclick="moveRight()" 
+                                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                            Kanan (+1) →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Operation Controls -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">🧮 Operasi Matematika</h3>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nilai Operasi:</label>
+                        <input type="number" id="operationValue" value="3" min="-10" max="10" 
+                               class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="performOperation('add')" 
+                                class="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
+                            + Tambah
+                        </button>
+                        <button onclick="performOperation('subtract')" 
+                                class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                            - Kurang
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">⚡ Aksi Cepat</h4>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="resetPosition()" 
+                            class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                        🏠 Reset ke 0
+                    </button>
+                    <button onclick="randomJump()" 
+                            class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">
+                        🎲 Lompat Acak
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Number Line Visualization -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h3 class="text-xl font-semibold text-gray-800 mb-6 text-center">📏 Garis Bilangan</h3>
+            
+            <!-- Settings Panel -->
+            <div class="mb-6 p-4 bg-gray-50 rounded-xl">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">⚙️ Pengaturan Garis Bilangan</h4>
+                <div class="grid md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nilai Minimum:</label>
+                        <input type="number" id="minRange" value="-20" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nilai Maksimum:</label>
+                        <input type="number" id="maxRange" value="20" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Skala Interval:</label>
+                        <input type="number" id="scaleInterval" value="5" min="1" max="20"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="applySettings()" 
+                                class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            🔄 Terapkan
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Position Display -->
+            <div class="text-center mb-6">
+                <div class="inline-block bg-blue-100 px-6 py-3 rounded-xl">
+                    <span class="text-sm text-blue-600 font-medium">Posisi Saat Ini:</span>
+                    <span id="positionDisplay" class="text-2xl font-bold text-blue-800 ml-2">0</span>
+                </div>
+            </div>
+
+            <!-- Number Line Container -->
+            <div class="relative mx-auto" style="width: 800px; height: 100px;">
+                <div class="number-line" id="numberLine">
+                    <!-- Ticks and numbers will be generated by JavaScript -->
+                </div>
+                
+                <!-- Pointer -->
+                <div class="pointer" id="pointer"></div>
+                
+                <!-- Operation Visual -->
+                <div class="operation-visual" id="operationVisual"></div>
+                
+                <!-- Jump Arc Container -->
+                <div id="arcContainer"></div>
+
+            </div>
+
+            <!-- Scale Info -->
+            <div class="text-center mt-4 text-sm text-gray-500">
+                <span id="rangeInfo">Rentang: -20 hingga +20</span> | 
+                <span id="scaleInfo">Interval: 5</span>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <div class="bg-white rounded-2xl shadow-xl p-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">📋 Informasi & Riwayat</h3>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-semibold text-gray-700 mb-2">💡 Cara Penggunaan:</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Gunakan tombol panah untuk bergerak satu langkah</li>
+                        <li>• Masukkan nilai untuk operasi penjumlahan/pengurangan</li>
+                        <li>• Lihat visualisasi gerakan pada garis bilangan</li>
+                        <li>• Reset ke posisi 0 kapan saja</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-gray-700 mb-2">📊 Riwayat Operasi:</h4>
+                    <div id="operationHistory" class="text-sm text-gray-600 space-y-1 max-h-24 overflow-y-auto">
+                        <div class="text-gray-400">Belum ada operasi...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPosition = 0;
+        let minPos = -20;
+        let maxPos = 20;
+        let scaleInterval = 5;
+        let operationHistory = [];
+
+        // Initialize the number line
+        function initializeNumberLine() {
+            const numberLine = document.getElementById('numberLine');
+            const lineWidth = 800;
+            const step = lineWidth / (maxPos - minPos);
+
+            // Clear existing content
+            numberLine.innerHTML = '';
+
+            // Create ticks and labels
+            for (let i = minPos; i <= maxPos; i++) {
+                const position = (i - minPos) * step;
+                
+                // Create tick
+                const tick = document.createElement('div');
+                tick.className = i % scaleInterval === 0 ? 'tick major-tick' : 'tick';
+                tick.style.left = position + 'px';
+                numberLine.appendChild(tick);
+
+                // Create number label for major ticks
+                if (i % scaleInterval === 0) {
+                    const label = document.createElement('div');
+                    label.className = 'number-label';
+                    label.style.left = position + 'px';
+                    label.textContent = i;
+                    numberLine.appendChild(label);
+                }
+            }
+
+            updatePointerPosition();
+            updateInfoDisplay();
+        }
+
+        // Update pointer position
+        function updatePointerPosition() {
+            const pointer = document.getElementById('pointer');
+            const lineWidth = 800;
+            const step = lineWidth / (maxPos - minPos);
+            const position = (currentPosition - minPos) * step;
+            
+            pointer.style.left = position + 'px';
+            document.getElementById('positionDisplay').textContent = currentPosition;
+            document.getElementById('currentPos').value = currentPosition;
+        }
+
+        // Set position directly
+        function setPosition() {
+            const newPos = parseInt(document.getElementById('currentPos').value);
+            if (newPos >= minPos && newPos <= maxPos) {
+                currentPosition = newPos;
+                updatePointerPosition();
+                addToHistory(`Set posisi ke ${currentPosition}`);
+            } else {
+                alert(`Posisi harus antara ${minPos} dan ${maxPos}`);
+            }
+        }
+
+        // Move left
+        function moveLeft() {
+            if (currentPosition > minPos) {
+                currentPosition--;
+                updatePointerPosition();
+                showOperation('-1', 'subtract');
+                addToHistory(`${currentPosition + 1} - 1 = ${currentPosition}`);
+            }
+        }
+
+        // Move right
+        function moveRight() {
+            if (currentPosition < maxPos) {
+                currentPosition++;
+                updatePointerPosition();
+                showOperation('+1', 'add');
+                addToHistory(`${currentPosition - 1} + 1 = ${currentPosition}`);
+            }
+        }
+
+        // Perform operation step by step
+        function performOperation(type) {
+            const value = parseInt(document.getElementById('operationValue').value);
+            const oldPosition = currentPosition;
+            
+            if (type === 'add') {
+                const newPos = currentPosition + value;
+                if (newPos <= maxPos) {
+                    showOperation(`+${value}`, 'add');
+                    moveStepByStep(currentPosition, newPos, () => {
+                        addToHistory(`${oldPosition} + ${value} = ${currentPosition}`);
+                    });
+                } else {
+                    alert(`Hasil melebihi batas maksimum (${maxPos})`);
+                    return;
+                }
+            } else if (type === 'subtract') {
+                const newPos = currentPosition - value;
+                if (newPos >= minPos) {
+                    showOperation(`-${value}`, 'subtract');
+                    moveStepByStep(currentPosition, newPos, () => {
+                        addToHistory(`${oldPosition} - ${value} = ${currentPosition}`);
+                    });
+                } else {
+                    alert(`Hasil kurang dari batas minimum (${minPos})`);
+                    return;
+                }
+            }
+        }
+
+        // Move step by step animation
+        function moveStepByStep(from, to, callback) {
+            const steps = Math.abs(to - from);
+            const direction = to > from ? 1 : -1;
+            let currentStep = 0;
+            
+            // Clear previous arcs
+            document.getElementById('arcContainer').innerHTML = '';
+            
+            function nextStep() {
+                if (currentStep < steps) {
+                    const stepFrom = from + (direction * currentStep);
+                    const stepTo = from + (direction * (currentStep + 1));
+                    
+                    // Show arc for this step
+                    showStepArc(stepFrom, stepTo, currentStep);
+                    
+                    currentPosition = stepTo;
+                    updatePointerPosition();
+                    currentStep++;
+                    setTimeout(nextStep, 800); // 800ms delay between each step
+                } else {
+                    if (callback) callback();
+                    // Clear arcs after completion
+                    setTimeout(() => {
+                        document.getElementById('arcContainer').innerHTML = '';
+                    }, 2000);
+                }
+            }
+            
+            nextStep();
+        }
+
+        // Show individual step arc
+        function showStepArc(from, to, stepIndex) {
+            const arcContainer = document.getElementById('arcContainer');
+            const lineWidth = 800;
+            const step = lineWidth / (maxPos - minPos);
+            
+            const fromPos = (from - minPos) * step;
+            const toPos = (to - minPos) * step;
+            const distance = Math.abs(toPos - fromPos);
+            const leftPos = Math.min(fromPos, toPos);
+            
+            const arc = document.createElement('div');
+            arc.className = 'jump-arc';
+            arc.style.left = leftPos + 'px';
+            arc.style.width = distance + 'px';
+            arc.style.height = '20px';
+            arc.style.top = '-30px';
+            
+            arcContainer.appendChild(arc);
+            
+            // Show arc with delay
+            setTimeout(() => {
+                arc.classList.add('show');
+            }, 100);
+            
+            // Hide arc after some time
+            setTimeout(() => {
+                arc.classList.remove('show');
+                setTimeout(() => {
+                    if (arc.parentNode) {
+                        arc.parentNode.removeChild(arc);
+                    }
+                }, 800);
+            }, 1500);
+        }
+
+        // Show operation visual
+        function showOperation(text, type) {
+            const visual = document.getElementById('operationVisual');
+            const lineWidth = 800;
+            const step = lineWidth / (maxPos - minPos);
+            const position = (currentPosition - minPos) * step;
+            
+            visual.textContent = text;
+            visual.style.left = position + 'px';
+            visual.className = `operation-visual ${type === 'add' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`;
+            
+            // Show animation
+            setTimeout(() => visual.classList.add('show'), 100);
+            setTimeout(() => {
+                visual.classList.remove('show');
+                visual.className = 'operation-visual';
+            }, 4000);
+        }
+
+
+
+        // Reset position
+        function resetPosition() {
+            currentPosition = 0;
+            updatePointerPosition();
+            addToHistory('Reset ke posisi 0');
+        }
+
+        // Random jump
+        function randomJump() {
+            const randomPos = Math.floor(Math.random() * (maxPos - minPos + 1)) + minPos;
+            const oldPos = currentPosition;
+            currentPosition = randomPos;
+            updatePointerPosition();
+            addToHistory(`Lompat acak dari ${oldPos} ke ${currentPosition}`);
+        }
+
+
+
+        // Apply settings
+        function applySettings() {
+            const newMinPos = parseInt(document.getElementById('minRange').value);
+            const newMaxPos = parseInt(document.getElementById('maxRange').value);
+            const newScaleInterval = parseInt(document.getElementById('scaleInterval').value);
+            
+            // Validation
+            if (newMinPos >= newMaxPos) {
+                alert('Nilai minimum harus lebih kecil dari nilai maksimum!');
+                return;
+            }
+            
+            if (newMaxPos - newMinPos > 100) {
+                alert('Rentang terlalu besar! Maksimal 100 angka.');
+                return;
+            }
+            
+            if (newScaleInterval < 1 || newScaleInterval > 20) {
+                alert('Skala interval harus antara 1 dan 20!');
+                return;
+            }
+            
+            if (newScaleInterval > (newMaxPos - newMinPos)) {
+                alert('Skala interval terlalu besar untuk rentang yang dipilih!');
+                return;
+            }
+            
+            // Apply new settings
+            minPos = newMinPos;
+            maxPos = newMaxPos;
+            scaleInterval = newScaleInterval;
+            
+            // Reset position if out of bounds
+            if (currentPosition < minPos || currentPosition > maxPos) {
+                currentPosition = 0;
+                if (currentPosition < minPos) currentPosition = minPos;
+                if (currentPosition > maxPos) currentPosition = maxPos;
+            }
+            
+            // Update input ranges
+            document.getElementById('currentPos').min = minPos;
+            document.getElementById('currentPos').max = maxPos;
+            
+            // Reinitialize number line
+            initializeNumberLine();
+            addToHistory(`Pengaturan diubah: ${minPos} hingga ${maxPos}, skala ${scaleInterval}`);
+        }
+
+        // Update info display
+        function updateInfoDisplay() {
+            document.getElementById('rangeInfo').textContent = `Rentang: ${minPos} hingga ${maxPos}`;
+            document.getElementById('scaleInfo').textContent = `Interval: ${scaleInterval}`;
+        }
+
+        // Add to history
+        function addToHistory(operation) {
+            operationHistory.unshift(operation);
+            if (operationHistory.length > 10) {
+                operationHistory.pop();
+            }
+            
+            const historyDiv = document.getElementById('operationHistory');
+            historyDiv.innerHTML = operationHistory.map(op => `<div>• ${op}</div>`).join('');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNumberLine();
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                moveLeft();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                moveRight();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                setPosition();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96c9e409a73dea7b',t:'MTc1NDc3MDE2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
