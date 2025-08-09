@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Tata Surya 3D Interaktif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            overflow: hidden;
+            color: white;
+            height: 100vh;
+        }
+
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #canvas {
+            display: block;
+            cursor: grab;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        }
+
+        #canvas:active {
+            cursor: grabbing;
+        }
+
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 20, 40, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 100, 200, 0.3);
+            width: 280px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 20, 40, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 100, 200, 0.3);
+            width: 300px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+        }
+
+        .control-group h3 {
+            color: #64b5f6;
+            margin-bottom: 12px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .button-grid.three-cols {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        button {
+            background: linear-gradient(145deg, #1976d2, #1565c0);
+            border: none;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #2196f3, #1976d2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.active {
+            background: linear-gradient(145deg, #4caf50, #388e3c);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #b3e5fc;
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(100, 200, 255, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2196f3;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(33, 150, 243, 0.5);
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .info-section:last-child {
+            border-bottom: none;
+        }
+
+        .info-section h3 {
+            color: #64b5f6;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .info-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e1f5fe;
+            margin-bottom: 10px;
+        }
+
+        .planet-stats {
+            background: rgba(76, 175, 80, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #4caf50;
+        }
+
+        .planet-stats strong {
+            color: #81c784;
+        }
+
+        .bottom-info {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 20, 40, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px 25px;
+            backdrop-filter: blur(15px);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .control-panel, .info-panel {
+                width: 250px;
+                font-size: 12px;
+            }
+            
+            .info-panel {
+                max-height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        
+        <div class="control-panel">
+            <div class="control-group">
+                <h3>🚀 Navigasi Planet</h3>
+                <div class="button-grid">
+                    <button onclick="focusPlanet('sun')">☀️ Matahari</button>
+                    <button onclick="focusPlanet('mercury')">☿️ Merkurius</button>
+                    <button onclick="focusPlanet('venus')">♀️ Venus</button>
+                    <button onclick="focusPlanet('earth')">🌍 Bumi</button>
+                    <button onclick="focusPlanet('mars')">🔴 Mars</button>
+                    <button onclick="focusPlanet('jupiter')">🪐 Jupiter</button>
+                    <button onclick="focusPlanet('saturn')">🪐 Saturnus</button>
+                    <button onclick="focusPlanet('uranus')">🔵 Uranus</button>
+                    <button onclick="focusPlanet('neptune')">🌀 Neptunus</button>
+                    <button onclick="resetView()">🔄 Reset View</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>⏱️ Kontrol Waktu</h3>
+                <div class="button-grid three-cols">
+                    <button onclick="pauseAnimation()" id="pauseBtn">⏸️ Pause</button>
+                    <button onclick="playAnimation()" id="playBtn" class="active">▶️ Play</button>
+                    <button onclick="fastAnimation()" id="fastBtn">⏩ Fast</button>
+                </div>
+                <div class="slider-container">
+                    <label for="speedSlider">Kecepatan: <span id="speedValue">1x</span></label>
+                    <input type="range" id="speedSlider" min="0" max="20" value="1" step="0.5">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>🔍 Tampilan</h3>
+                <div class="button-grid three-cols">
+                    <button onclick="toggleOrbits()" id="orbitBtn" class="active">Orbit</button>
+                    <button onclick="toggleLabels()" id="labelBtn" class="active">Label</button>
+                    <button onclick="toggleTrails()" id="trailBtn">Jejak</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="info-section">
+                <h3 id="planetName">🌍 Bumi</h3>
+                <p id="planetDescription">Planet ketiga dari Matahari dan satu-satunya planet yang diketahui memiliki kehidupan. Bumi memiliki atmosfer yang melindungi dan air cair di permukaannya.</p>
+                
+                <div class="planet-stats">
+                    <strong>Jarak dari Matahari:</strong> <span id="planetDistance">149.6 juta km</span><br>
+                    <strong>Periode Orbit:</strong> <span id="planetPeriod">365.25 hari</span><br>
+                    <strong>Diameter:</strong> <span id="planetDiameter">12,742 km</span><br>
+                    <strong>Suhu Rata-rata:</strong> <span id="planetTemp">15°C</span>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>💡 Fakta Menarik</h3>
+                <p id="planetFact">Bumi adalah satu-satunya planet yang memiliki lempeng tektonik aktif, yang membantu mengatur suhu planet dan mendukung kehidupan!</p>
+            </div>
+        </div>
+        
+        <div class="bottom-info">
+            <strong>🖱️ Kontrol:</strong> Klik dan seret untuk memutar kamera • Scroll untuk zoom • Klik planet untuk info detail
+        </div>
+    </div>
+
+    <script>
+        // Variabel global
+        let canvas, ctx;
+        let camera = { x: 0, y: 0, zoom: 0.8 };
+        let mouse = { x: 0, y: 0, down: false, lastX: 0, lastY: 0 };
+        let animationSpeed = 1;
+        let isPaused = false;
+        let showOrbits = true;
+        let showLabels = true;
+        let showTrails = false;
+        let selectedPlanet = 'earth';
+        let time = 0;
+        let trails = [];
+
+        // Data planet dengan orbit yang realistis
+        const planets = {
+            sun: {
+                name: 'Matahari',
+                x: 0, y: 0,
+                radius: 25,
+                color: '#FFD700',
+                description: 'Bintang di pusat tata surya kita yang memberikan cahaya dan panas untuk semua planet.',
+                distance: '0 km (pusat)',
+                period: 'Tidak berorbit',
+                diameter: '1.39 juta km',
+                temperature: '5,778°C',
+                fact: 'Matahari mengandung 99.86% dari total massa tata surya dan dapat menampung 1.3 juta planet Bumi!'
+            },
+            mercury: {
+                name: 'Merkurius',
+                orbitRadius: 60,
+                orbitSpeed: 0.12,
+                radius: 6,
+                color: '#FFA500',
+                angle: 0,
+                description: 'Planet terkecil dan terdekat dengan Matahari. Merkurius mengalami perubahan suhu yang ekstrem.',
+                distance: '58 juta km',
+                period: '88 hari',
+                diameter: '4,879 km',
+                temperature: '167°C (siang), -173°C (malam)',
+                fact: 'Merkurius tidak memiliki atmosfer dan satu hari di Merkurius lebih panjang dari satu tahunnya!'
+            },
+            venus: {
+                name: 'Venus',
+                orbitRadius: 85,
+                orbitSpeed: 0.09,
+                radius: 8,
+                color: '#FFC649',
+                angle: 1.2,
+                description: 'Planet terpanas di tata surya karena efek rumah kaca yang ekstrem. Sering disebut "bintang fajar".',
+                distance: '108 juta km',
+                period: '225 hari',
+                diameter: '12,104 km',
+                temperature: '464°C',
+                fact: 'Venus berputar mundur dan memiliki hari yang lebih panjang dari tahunnya! Satu hari Venus = 243 hari Bumi.'
+            },
+            earth: {
+                name: 'Bumi',
+                orbitRadius: 110,
+                orbitSpeed: 0.07,
+                radius: 9,
+                color: '#4A90E2',
+                angle: 0,
+                description: 'Planet ketiga dari Matahari dan satu-satunya planet yang diketahui memiliki kehidupan.',
+                distance: '149.6 juta km',
+                period: '365.25 hari',
+                diameter: '12,742 km',
+                temperature: '15°C',
+                fact: 'Bumi adalah satu-satunya planet yang memiliki lempeng tektonik aktif dan medan magnet yang melindungi dari radiasi!'
+            },
+            mars: {
+                name: 'Mars',
+                orbitRadius: 140,
+                orbitSpeed: 0.05,
+                radius: 7,
+                color: '#FF4500',
+                angle: Math.PI,
+                description: 'Planet Merah yang memiliki gunung berapi terbesar dan ngarai terdalam di tata surya.',
+                distance: '228 juta km',
+                period: '687 hari',
+                diameter: '6,779 km',
+                temperature: '-65°C',
+                fact: 'Mars memiliki musim seperti Bumi tetapi berlangsung dua kali lebih lama karena orbitnya yang lebih jauh!'
+            },
+            jupiter: {
+                name: 'Jupiter',
+                orbitRadius: 200,
+                orbitSpeed: 0.03,
+                radius: 20,
+                color: '#DAA520',
+                angle: 2.5,
+                description: 'Planet terbesar di tata surya, raksasa gas yang melindungi planet dalam dari asteroid.',
+                distance: '778 juta km',
+                period: '12 tahun',
+                diameter: '139,820 km',
+                temperature: '-110°C',
+                fact: 'Jupiter memiliki lebih dari 80 bulan dan Bintik Merah Besar yang lebih besar dari Bumi!'
+            },
+            saturn: {
+                name: 'Saturnus',
+                orbitRadius: 260,
+                orbitSpeed: 0.025,
+                radius: 18,
+                color: '#FAD5A5',
+                angle: 4.2,
+                hasRings: true,
+                description: 'Terkenal dengan sistem cincinnya yang spektakuler. Saturnus kurang padat dari air.',
+                distance: '1.43 miliar km',
+                period: '29 tahun',
+                diameter: '116,460 km',
+                temperature: '-140°C',
+                fact: 'Saturnus akan mengapung di air jika ada bak mandi yang cukup besar! Cincinnya terbuat dari es dan batuan.'
+            },
+            uranus: {
+                name: 'Uranus',
+                orbitRadius: 320,
+                orbitSpeed: 0.02,
+                radius: 14,
+                color: '#4FD0E3',
+                angle: 3.8,
+                description: 'Raksasa es yang berputar miring, kemungkinan akibat tabrakan dengan objek besar di masa lalu.',
+                distance: '2.87 miliar km',
+                period: '84 tahun',
+                diameter: '50,724 km',
+                temperature: '-195°C',
+                fact: 'Uranus berputar miring dengan kemiringan 98 derajat, sehingga kutubnya menghadap Matahari!'
+            },
+            neptune: {
+                name: 'Neptunus',
+                orbitRadius: 380,
+                orbitSpeed: 0.015,
+                radius: 13,
+                color: '#4169E1',
+                angle: 5.1,
+                description: 'Planet terjauh dengan angin terkencang di tata surya, ditemukan melalui perhitungan matematika.',
+                distance: '4.5 miliar km',
+                period: '165 tahun',
+                diameter: '49,244 km',
+                temperature: '-200°C',
+                fact: 'Neptunus memiliki angin tercepat di tata surya mencapai 2,100 km/jam dan baru menyelesaikan satu orbit sejak ditemukan!'
+            }
+        };
+
+        // Inisialisasi
+        function init() {
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+            
+            resizeCanvas();
+            setupEventListeners();
+            selectPlanet('earth');
+            
+            // Mulai animasi
+            animate();
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function setupEventListeners() {
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Mouse controls
+            canvas.addEventListener('mousedown', handleMouseDown);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseup', handleMouseUp);
+            canvas.addEventListener('wheel', handleWheel);
+            canvas.addEventListener('click', handleClick);
+            
+            // Speed slider
+            document.getElementById('speedSlider').addEventListener('input', function(e) {
+                animationSpeed = parseFloat(e.target.value);
+                document.getElementById('speedValue').textContent = animationSpeed + 'x';
+            });
+        }
+
+        function handleMouseDown(e) {
+            mouse.down = true;
+            mouse.lastX = e.clientX;
+            mouse.lastY = e.clientY;
+        }
+
+        function handleMouseMove(e) {
+            if (mouse.down) {
+                const deltaX = e.clientX - mouse.lastX;
+                const deltaY = e.clientY - mouse.lastY;
+                
+                camera.x -= deltaX / camera.zoom;
+                camera.y -= deltaY / camera.zoom;
+                
+                mouse.lastX = e.clientX;
+                mouse.lastY = e.clientY;
+            }
+        }
+
+        function handleMouseUp() {
+            mouse.down = false;
+        }
+
+        function handleWheel(e) {
+            e.preventDefault();
+            const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+            camera.zoom = Math.max(0.1, Math.min(5, camera.zoom * zoomFactor));
+        }
+
+        function handleClick(e) {
+            if (mouse.down) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            
+            // Convert screen coordinates to world coordinates
+            const worldX = (clickX - canvas.width / 2) / camera.zoom + camera.x;
+            const worldY = (clickY - canvas.height / 2) / camera.zoom + camera.y;
+            
+            // Check if clicked on a planet
+            Object.keys(planets).forEach(key => {
+                const planet = planets[key];
+                const pos = getPlanetPosition(planet);
+                const distance = Math.sqrt((worldX - pos.x) ** 2 + (worldY - pos.y) ** 2);
+                
+                if (distance < planet.radius + 10) {
+                    selectPlanet(key);
+                }
+            });
+        }
+
+        function getPlanetPosition(planet) {
+            if (planet.name === 'Matahari') {
+                return { x: 0, y: 0 };
+            }
+            
+            return {
+                x: Math.cos(planet.angle) * planet.orbitRadius,
+                y: Math.sin(planet.angle) * planet.orbitRadius
+            };
+        }
+
+        function selectPlanet(planetKey) {
+            selectedPlanet = planetKey;
+            const planet = planets[planetKey];
+            
+            document.getElementById('planetName').textContent = getEmoji(planetKey) + ' ' + planet.name;
+            document.getElementById('planetDescription').textContent = planet.description;
+            document.getElementById('planetDistance').textContent = planet.distance;
+            document.getElementById('planetPeriod').textContent = planet.period;
+            document.getElementById('planetDiameter').textContent = planet.diameter;
+            document.getElementById('planetTemp').textContent = planet.temperature;
+            document.getElementById('planetFact').textContent = planet.fact;
+        }
+
+        function getEmoji(planetKey) {
+            const emojis = {
+                sun: '☀️', mercury: '☿️', venus: '♀️', earth: '🌍',
+                mars: '🔴', jupiter: '🪐', saturn: '🪐',
+                uranus: '🔵', neptune: '🌀'
+            };
+            return emojis[planetKey] || '🪐';
+        }
+
+        function focusPlanet(planetKey) {
+            const planet = planets[planetKey];
+            const pos = getPlanetPosition(planet);
+            
+            camera.x = pos.x;
+            camera.y = pos.y;
+            camera.zoom = planetKey === 'sun' ? 1.2 : 2.0;
+            
+            selectPlanet(planetKey);
+        }
+
+        function resetView() {
+            camera.x = 0;
+            camera.y = 0;
+            camera.zoom = 0.8;
+            selectPlanet('earth');
+        }
+
+        function pauseAnimation() {
+            isPaused = true;
+            updateTimeButtons('pause');
+        }
+
+        function playAnimation() {
+            isPaused = false;
+            animationSpeed = 1;
+            document.getElementById('speedSlider').value = 1;
+            document.getElementById('speedValue').textContent = '1x';
+            updateTimeButtons('play');
+        }
+
+        function fastAnimation() {
+            isPaused = false;
+            animationSpeed = 5;
+            document.getElementById('speedSlider').value = 5;
+            document.getElementById('speedValue').textContent = '5x';
+            updateTimeButtons('fast');
+        }
+
+        function updateTimeButtons(active) {
+            document.querySelectorAll('#pauseBtn, #playBtn, #fastBtn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (active === 'pause') document.getElementById('pauseBtn').classList.add('active');
+            if (active === 'play') document.getElementById('playBtn').classList.add('active');
+            if (active === 'fast') document.getElementById('fastBtn').classList.add('active');
+        }
+
+        function toggleOrbits() {
+            showOrbits = !showOrbits;
+            document.getElementById('orbitBtn').classList.toggle('active', showOrbits);
+        }
+
+        function toggleLabels() {
+            showLabels = !showLabels;
+            document.getElementById('labelBtn').classList.toggle('active', showLabels);
+        }
+
+        function toggleTrails() {
+            showTrails = !showTrails;
+            document.getElementById('trailBtn').classList.toggle('active', showTrails);
+            if (!showTrails) {
+                trails = [];
+            }
+        }
+
+        function update() {
+            if (!isPaused) {
+                time += 0.016 * animationSpeed;
+                
+                // Update planet positions
+                Object.keys(planets).forEach(key => {
+                    const planet = planets[key];
+                    if (planet.orbitSpeed) {
+                        planet.angle += planet.orbitSpeed * animationSpeed * 0.016;
+                        
+                        // Keep angle in range
+                        if (planet.angle > Math.PI * 2) {
+                            planet.angle -= Math.PI * 2;
+                        }
+                    }
+                });
+                
+                // Add trails
+                if (showTrails && time % 10 < 0.1) {
+                    Object.keys(planets).forEach(key => {
+                        if (key !== 'sun') {
+                            const pos = getPlanetPosition(planets[key]);
+                            trails.push({
+                                x: pos.x,
+                                y: pos.y,
+                                life: 100,
+                                color: planets[key].color
+                            });
+                        }
+                    });
+                    
+                    // Remove old trails
+                    trails = trails.filter(trail => {
+                        trail.life--;
+                        return trail.life > 0;
+                    });
+                }
+            }
+        }
+
+        function render() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Save context
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.scale(camera.zoom, camera.zoom);
+            ctx.translate(-camera.x, -camera.y);
+            
+            // Draw trails
+            if (showTrails) {
+                trails.forEach(trail => {
+                    const alpha = trail.life / 100;
+                    ctx.fillStyle = trail.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+                    ctx.beginPath();
+                    ctx.arc(trail.x, trail.y, 1, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+            
+            // Draw orbits
+            if (showOrbits) {
+                ctx.strokeStyle = 'rgba(100, 200, 255, 0.3)';
+                ctx.lineWidth = 1;
+                
+                Object.keys(planets).forEach(key => {
+                    const planet = planets[key];
+                    if (planet.orbitRadius) {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, planet.orbitRadius, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                });
+            }
+            
+            // Draw planets
+            Object.keys(planets).forEach(key => {
+                const planet = planets[key];
+                const pos = getPlanetPosition(planet);
+                
+                // Planet glow effect
+                if (key === 'sun') {
+                    const gradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, planet.radius * 2);
+                    gradient.addColorStop(0, planet.color);
+                    gradient.addColorStop(0.5, planet.color + '80');
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, planet.radius * 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Planet body
+                ctx.fillStyle = planet.color;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, planet.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Saturn's rings
+                if (planet.hasRings) {
+                    ctx.strokeStyle = planet.color;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(pos.x, pos.y, planet.radius + 8, planet.radius + 4, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.ellipse(pos.x, pos.y, planet.radius + 12, planet.radius + 6, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                // Selection highlight
+                if (selectedPlanet === key) {
+                    ctx.strokeStyle = '#FFD700';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, planet.radius + 8, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                // Labels
+                if (showLabels) {
+                    ctx.fillStyle = 'white';
+                    ctx.font = `${Math.max(12, 16 / camera.zoom)}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(planet.name, pos.x, pos.y + planet.radius + 20);
+                }
+            });
+            
+            ctx.restore();
+        }
+
+        function animate() {
+            update();
+            render();
+            requestAnimationFrame(animate);
+        }
+
+        // Start the simulation
+        window.addEventListener('load', init);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96c9613065084b1b',t:'MTc1NDc2NDgwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
